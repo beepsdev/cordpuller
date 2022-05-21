@@ -1,6 +1,7 @@
 <?php
 
 namespace Cordpuller;
+use Cordpuller\types\Application;
 use Cordpuller\types\Channel;
 use Cordpuller\types\Guild;
 use Cordpuller\types\User;
@@ -47,6 +48,16 @@ class Discord {
         } catch(\GuzzleHttp\Exception\RequestException $ex){
             throw $ex;
         }
+    }
+
+    public function getApplication(string $id): Application {
+        if(Application::$cache != null && Application::$cache->has($id)){
+            return Application::$cache->get($id);
+        }
+        return Application::createfromResponse($this, $this->makeRequest('GET', Application::$ENDPOINT . '/' . $id));
+    }
+    public function getCurrentApplication(): Application {
+        return Application::createfromResponse($this, $this->makeRequest('GET', 'oauth2/' . Application::$ENDPOINT . '/' . '@me'));
     }
 
     public function getUser(string $id): User {
