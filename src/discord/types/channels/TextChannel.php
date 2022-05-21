@@ -1,6 +1,6 @@
 <?php
 
-namespace Cordpuller\types;
+namespace Cordpuller\types\channels;
 
 class TextChannel extends GuildChannel {
 

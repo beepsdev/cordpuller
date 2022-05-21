@@ -1,9 +1,10 @@
 <?php
 
-namespace Cordpuller\types;
+namespace Cordpuller\types\channels;
 
 use Cordpuller\Discord;
 use Cordpuller\libs\fieldmaps\ChannelTypes;
+use Cordpuller\types\Base;
 
 class Channel extends Base {
 
@@ -11,6 +12,7 @@ class Channel extends Base {
 
     protected int $type;
     protected string $name;
+    protected string $last_message_id;
 
     /**
      * @return int
@@ -58,6 +60,32 @@ class Channel extends Base {
                 break;
             case ChannelTypes::DM;
                 $obj = new DmChannel();
+                break;
+            case ChannelTypes::GUILD_VOICE;
+                $obj = new VoiceChannel();
+                break;
+            case ChannelTypes::GROUP_DM;
+                $obj = new GroupChannel();
+                break;
+            case ChannelTypes::GUILD_CATEGORY;
+                $obj = new CategoryChannel();
+                break;
+            case ChannelTypes::GUILD_NEWS;
+                $obj = new NewsChannel();
+                break;
+            case ChannelTypes::GUILD_NEWS_THREAD;
+            case ChannelTypes::GUILD_PUBLIC_THREAD;
+            case ChannelTypes::GUILD_PRIVATE_THREAD;
+                $obj = new ThreadChannel();
+                break;
+            case ChannelTypes::GUILD_STAGE_VOICE;
+                $obj = new StageChannel();
+                break;
+            case ChannelTypes::GUILD_DIRECTORY;
+                $obj = new DirectoryChannel();
+                break;
+            case ChannelTypes::GUILD_FORUM;
+                $obj = new ForumChannel();
                 break;
         }
 

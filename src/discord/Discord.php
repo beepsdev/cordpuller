@@ -2,7 +2,7 @@
 
 namespace Cordpuller;
 use Cordpuller\types\Application;
-use Cordpuller\types\Channel;
+use Cordpuller\types\channels\Channel;
 use Cordpuller\types\Guild;
 use Cordpuller\types\User;
 use GuzzleHttp\Client;
