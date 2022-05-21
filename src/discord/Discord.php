@@ -54,7 +54,7 @@ class Discord {
 
     }
 
-    public function interaction(): Interaction|ApplicationCommandAutocomplete|ApplicationCommandInteraction|MessageComponent|ModalSubmit {
+    public function parseRequestAsInteraction(): Interaction|ApplicationCommandAutocomplete|ApplicationCommandInteraction|MessageComponent|ModalSubmit {
 
         header("Content-Type: application/json");
 

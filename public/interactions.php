@@ -15,8 +15,7 @@ try{
     // Create instance
     $config = include('../.env.php');
     $discord = new Discord($config['APPLICATION_ID'], $config['PUBLIC_KEY'], $config['PRIVATE_KEY'], $config['TOKEN']);
-
-    $interaction = $discord->interaction();
+    $interaction = $discord->parseRequestAsInteraction();
 
     if($interaction instanceof ApplicationCommandInteraction){
 
