@@ -1,9 +1,21 @@
 <?php
 
 namespace Cordpuller;
+use Cordpuller\interactions\ApplicationCommandAutocomplete;
+use Cordpuller\interactions\ApplicationCommandInteraction;
+use Cordpuller\interactions\Interaction;
+use Cordpuller\interactions\MessageComponent;
+use Cordpuller\interactions\ModalSubmit;
+use Cordpuller\libs\builder\CommandBuilder;
+use Cordpuller\libs\errors\InteractionVerificationFailed;
+use Cordpuller\libs\fieldmaps\InteractionResponseTypes;
+use Cordpuller\libs\fieldmaps\InteractionTypes;
+use Cordpuller\libs\UtilMethods;
 use Cordpuller\types\Application;
 use Cordpuller\types\channels\Channel;
+use Cordpuller\types\channels\TextChannel;
 use Cordpuller\types\Guild;
+use Cordpuller\types\Message;
 use Cordpuller\types\User;
 use GuzzleHttp\Client;
 
@@ -15,12 +27,14 @@ class Discord {
     public static $DISCORD_BASE_API_TIMEOUT = 10;
 
     private static $client;
+    private static $app_id;
     private static $app_public_key;
     private static $app_private_key;
     private static $app_token;
 
-    public function __construct(string $public_key, string $private_key, string $token, bool $recreate_client = false) {
+    public function __construct(string $application_id, string $public_key, string $private_key, string $token, bool $recreate_client = false) {
 
+        static::$app_id = $application_id;
         static::$app_public_key = $public_key;
         static::$app_private_key = $private_key;
         static::$app_token = $token;
@@ -32,6 +46,7 @@ class Discord {
                 'headers' => array(
                     'User-Agent' => 'Cordpuller/1.0',
                     'Accept' => 'Application/json',
+                    'Content-Type' => 'application/json',
                     'Authorization' => 'Bot ' . static::$app_token
                 )
             ));
@@ -39,15 +54,72 @@ class Discord {
 
     }
 
-    private function makeRequest(string $method, string $endpoint, array $query = array()): ?array{
+    public function interaction(): Interaction|ApplicationCommandAutocomplete|ApplicationCommandInteraction|MessageComponent|ModalSubmit {
+
+        header("Content-Type: application/json");
+
+        $sig    = $_SERVER['HTTP_X_SIGNATURE_ED25519'] ?? null;
+        $sig_ts = $_SERVER['HTTP_X_SIGNATURE_TIMESTAMP'] ?? null;
+        $body   = file_get_contents('php://input');
+
+        if($sig == null || $sig_ts == null){
+            throw new InteractionVerificationFailed();
+        }
+
+        $verified = UtilMethods::verifyKey($body, $sig, $sig_ts, static::$app_public_key);
+        if($verified === false){
+            throw new InteractionVerificationFailed();
+        }
+
+        $json = json_decode($body, true);
+
+        $obj = Interaction::Build($json);
+        $obj->createFromResponse($this, $json['data'], $obj);
+
+        // Exit early to handle pings
+        if($json['type'] === InteractionTypes::PING){
+            http_response_code(200);
+            die(json_encode(array(
+                'type' => InteractionResponseTypes::PONG
+            )));
+        }
+
+        return $obj;
+
+    }
+
+    private function makeRequest(string $method, string $endpoint, array $query = array(), ?string $body = null): ?array{
         try{
             $res = static::$client->request($method, $endpoint, array(
-                'query' => $query
+                'query' => $query,
+                'body' => $body
             ));
             return json_decode($res->getBody(), true);
         } catch(\GuzzleHttp\Exception\RequestException $ex){
+            var_dump($ex);
             throw $ex;
         }
+    }
+
+    public function registerCommand(CommandBuilder $command): ?array
+    {
+        return $this->makeRequest('POST', 'applications/' . static::$app_id . '/commands', array(), json_encode($command));
+    }
+
+    public function sendMessage(string|Channel $channel, string $message, ?EmbedBuilder $embed): ?array
+    {
+
+        if($channel instanceof Channel){
+            $channel = $channel->getId();
+        }
+
+        $data = json_encode(array(
+            "content"=> $message,
+            "embeds"=> array($embed)
+        ));
+
+        return $this->makeRequest('POST', Channel::$ENDPOINT . '/' . $channel . '/' . Message::$ENDPOINT, array(), $data);
+
     }
 
     public function getApplication(string $id): Application {

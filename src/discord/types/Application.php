@@ -24,8 +24,8 @@ class Application extends Base {
     protected string $verify_key;
     protected ?Team $team;
     protected string $team_id;
-    protected ?Guild $guild;
-    protected ?string $guild_id;
+    protected ?Guild $guild = null;
+    protected ?string $guild_id = null;
     protected ?string $primary_sku_id;
     protected ?string $slug;
     protected ?string $cover_image;
@@ -182,13 +182,13 @@ class Application extends Base {
      */
      protected function setOwner(array|User $owner): void
     {
-
         if($owner instanceof User){
             $this->owner = $owner;
+            $this->owner_id = $owner->getId();
         }else{
+            $this->setOwnerId($owner['id']);
             $this->owner = static::$client->getUser($owner['id']);
         }
-
     }
 
     /**
@@ -260,15 +260,27 @@ class Application extends Base {
      */
     public function getGuild(): ?Guild
     {
+        if(!$this->guild instanceof Guild) {
+            if($this->getGuildId()){
+                $this->setGuild(static::$client->getGuild($this->getGuildId()));
+            }else{
+                $this->setGuild(null);
+            }
+        }
         return $this->guild;
     }
 
     /**
-     * @param Guild|null $guild
+     * @param Guild|int|null $guild
      */
-     protected function setGuild(?Guild $guild): void
+     protected function setGuild(null|Guild|int $guild): void
     {
-        $this->guild = $guild;
+        if($guild instanceof Guild){
+            $this->guild = $guild;
+            $this->setGuildId($guild->getId());
+        }else{
+            $this->setGuildId($guild);
+        }
     }
 
     /**
