@@ -1,6 +1,6 @@
 <?php
 
-namespace Cordpuller\flags;
+namespace Cordpuller\libs\flags;
 
 use Cordpuller\libs\Bitfield;
 
