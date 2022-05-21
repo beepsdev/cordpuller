@@ -3,6 +3,7 @@
 namespace Cordpuller\types;
 
 use Cordpuller\libs\DiscordMedia;
+use Cordpuller\libs\fieldmaps\InstallParams;
 use Cordpuller\libs\flags\ApplicationFlags;
 use Cordpuller\libs\flags\Permissions;
 
