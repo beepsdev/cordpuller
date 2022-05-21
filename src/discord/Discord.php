@@ -73,9 +73,6 @@ class Discord {
 
         $json = json_decode($body, true);
 
-        $obj = Interaction::Build($json);
-        $obj->createFromResponse($this, $json['data'], $obj);
-
         // Exit early to handle pings
         if($json['type'] === InteractionTypes::PING){
             http_response_code(200);
@@ -84,6 +81,8 @@ class Discord {
             )));
         }
 
+        $obj = Interaction::Build($json);
+        $obj->createFromResponse($this, $json['data'], $obj);
         return $obj;
 
     }
