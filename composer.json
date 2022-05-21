@@ -1,0 +1,20 @@
+{
+    "name": "beepsdev/cordpuller",
+    "description": "",
+    "type": "library",
+    "version": "0.1.3",
+    "autoload": {
+        "psr-4": {
+            "Cordpuller\\": "src/discord/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Beepsterr",
+            "email": "git@beeps.dev"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.4"
+    }
+}
