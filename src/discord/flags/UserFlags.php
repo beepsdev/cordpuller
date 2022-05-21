@@ -4,7 +4,7 @@ namespace Cordpuller\flags;
 
 use Cordpuller\libs\Bitfield;
 
-Class User extends Bitfield {
+Class UserFlags extends Bitfield {
 
     static $FLAGS = array(
         "STAFF" => 1<<0,

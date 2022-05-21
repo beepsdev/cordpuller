@@ -2,13 +2,14 @@
 
 namespace Cordpuller;
 use Cordpuller\types\Channel;
+use Cordpuller\types\Guild;
 use Cordpuller\types\User;
 use GuzzleHttp\Client;
 
 
 class Discord {
 
-    public static $DISCORD_BASE_API_URL = "https://discord.com/api/";
+    public static $DISCORD_BASE_API_URL = "https://discord.com/api";
     public static $DISCORD_BASE_API_VERSION = 'v10';
     public static $DISCORD_BASE_API_TIMEOUT = 10;
 
@@ -27,31 +28,58 @@ class Discord {
             static::$client = new Client(array(
                 'base_uri' => static::$DISCORD_BASE_API_URL . '/' . static::$DISCORD_BASE_API_VERSION . '/',
                 'timeout' =>  static::$DISCORD_BASE_API_TIMEOUT,
-                'defaults' => array(
-                    'headers' => array(
-                        'User-Agent' => 'Cordpuller/1.0',
-                        'Accept' => 'Application/json',
-                        'Authorization' => 'Bot ' . static::$app_token
-                    )
+                'headers' => array(
+                    'User-Agent' => 'Cordpuller/1.0',
+                    'Accept' => 'Application/json',
+                    'Authorization' => 'Bot ' . static::$app_token
                 )
             ));
         }
 
     }
 
+    private function makeRequest(string $method, string $endpoint, array $query = array()): ?array{
+        try{
+            $res = static::$client->request($method, $endpoint, array(
+                'query' => $query
+            ));
+            return json_decode($res->getBody(), true);
+        } catch(\GuzzleHttp\Exception\RequestException $ex){
+            throw $ex;
+        }
+    }
+
     public function getUser(string $id): User {
-
-        $res = static::$client->request('GET', User::$ENDPOINT . '/' . $id);
-        return User::createfromResponse(json_decode($res->getBody()));
-
+        if(Guild::$cache != null && User::$cache->has($id)){
+            return User::$cache->get($id);
+        }
+        return User::createfromResponse($this, $this->makeRequest('GET', User::$ENDPOINT . '/' . $id));
     }
 
-    public function getChannel(string $id, string $server_id): Channel {
-
+    public function getCurrentUser(): User {
+        return $this->getUser('@me');
     }
 
-    public function getServer(string $id){
+    public function getChannel(string $id): Channel {
+        if(Channel::$cache != null && Channel::$cache->has($id)){
+            return Channel::$cache->get($id);
+        }
+        return Channel::createfromResponse($this, $this->makeRequest('GET', Channel::$ENDPOINT . '/' . $id));
+    }
 
+    public function getGuild(string $id, bool $counts = false): Guild {
+
+        $query = array();
+
+        if($counts){
+            $query['with_counts'] = true;
+        }else{
+            if(Guild::$cache != null && Guild::$cache->has($id)){
+                return Guild::$cache->get($id);
+            }
+        }
+
+        return Guild::createfromResponse($this, $this->makeRequest('GET', Guild::$ENDPOINT . '/' . $id, $query));
     }
 
 
