@@ -2,8 +2,8 @@
 
 namespace Cordpuller\types;
 
-use Cordpuller\flags\UserFlags;
 use Cordpuller\libs\DiscordMedia;
+use Cordpuller\libs\flags\UserFlags;
 
 Class User Extends Base {
 

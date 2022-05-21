@@ -2,9 +2,7 @@
 
 namespace Cordpuller\libs;
 
-use Cordpuller\flags\StickerFormats;
-use Cordpuller\types\Base;
-use Exception;
+use Cordpuller\libs\fieldmaps\StickerFormats;
 
 /**
  * @link https://discord.com/developers/docs/reference#image-formatting

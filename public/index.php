@@ -24,3 +24,10 @@ $user = $discord->getUser('71167334798065664');
 echo '- User Name: ' . $user->getUsername() . '<br>';
 echo '- User Avatar: <img src="' . $user->getAvatarURL() . '" style="width: 50px;"/><br>';
 echo '- User Type: ' . $user::class . '<br><br>';
+
+$app = $discord->getCurrentApplication();
+echo '- Application Name: ' . $app->getName() . '<br>';
+echo '- Application Icon: <img src="' . $app->getIconURL() . '" style="width: 50px;"/><br>';
+echo '- Application Owner: ' . $app->getOwner()->getusername() . '<br><br>';
+var_dump($app->getFlags());
+var_dump($app->getFlags()->toArray());

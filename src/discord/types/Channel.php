@@ -3,7 +3,7 @@
 namespace Cordpuller\types;
 
 use Cordpuller\Discord;
-use Cordpuller\flags\ChannelTypes;
+use Cordpuller\libs\fieldmaps\ChannelTypes;
 
 class Channel extends Base {
 

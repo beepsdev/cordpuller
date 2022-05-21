@@ -2,10 +2,9 @@
 
 namespace Cordpuller\types;
 
-use Cordpuller\flags\Permissions;
-use Cordpuller\flags\SystemChannelFlags;
-use Cordpuller\flags\UserFlags;
 use Cordpuller\libs\DiscordMedia;
+use Cordpuller\libs\flags\Permissions;
+use Cordpuller\libs\flags\SystemChannelFlags;
 
 Class Guild Extends Base {
 
@@ -157,7 +156,7 @@ Class Guild Extends Base {
     }
 
     /**
-     * @return Permissions|null
+     * @return \Cordpuller\libs\flags\Permissions|null
      */
     public function getPermissions(): ?Permissions
     {
@@ -165,7 +164,7 @@ Class Guild Extends Base {
     }
 
     /**
-     * @param Permissions|null $permissions
+     * @param \Cordpuller\libs\flags\Permissions|null $permissions
      */
     public function setPermissions(?Permissions $permissions): void
     {
@@ -381,7 +380,7 @@ Class Guild Extends Base {
     }
 
     /**
-     * @return SystemChannelFlags
+     * @return \Cordpuller\libs\flags\SystemChannelFlags
      */
     public function getSystemChannelFlags(): SystemChannelFlags
     {
