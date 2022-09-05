@@ -1,13 +1,13 @@
 <?php
 
-use Cordpuller\Discord;
-use Cordpuller\libs\builder\CommandBuilder;
-use Cordpuller\libs\fieldmaps\ApplicationCommandTypes;
+use Cordpuller_old\Discord;
+use Cordpuller_old\libs\builder\CommandBuilder;
+use Cordpuller_old\libs\fieldmaps\ApplicationCommandTypes;
 
 require('../vendor/autoload.php');
 
 // Create instance
-$config = include('../.env.php');
+$config = include('../.env.sl.php');
 $discord = new Discord($config['APPLICATION_ID'], $config['PUBLIC_KEY'], $config['PRIVATE_KEY'], $config['TOKEN']);
 
 $app = $discord->getCurrentApplication();

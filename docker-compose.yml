@@ -9,6 +9,7 @@ services:
       - ./:/app
     links:
       - php
+      - redis
   php:
     build:
       context: .
@@ -16,3 +17,11 @@ services:
     volumes:
       - ./:/app
       - ./docker/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    links:
+      - redis
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./docker/redis:/data
